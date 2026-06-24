@@ -1,0 +1,113 @@
+
+There are no discarded input sections
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+FLASH            0x08000000         0x00080000         xr
+RAM              0x20000000         0x00020000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD build/main.o
+LOAD build/startup.o
+                0x20020000                        _estack = (ORIGIN (RAM) + LENGTH (RAM))
+
+.isr_vector     0x08000000       0xe0
+ *(isr_vector)
+ .isr_vector    0x08000000       0xe0 build/startup.o
+                0x08000000                vectors
+
+.text           0x080000e0      0x340
+ *(.text)
+ .text          0x080000e0      0x2d8 build/main.o
+                0x080000e0                main
+                0x08000214                usart_send_string
+                0x08000254                usart_send_char
+                0x08000284                usart_recieve_byte
+                0x080002b0                usart_dma_transmit
+                0x08000328                USART1_IRQHandler
+                0x08000358                ring_buffer_write
+                0x08000388                ring_buffer_read
+ .text          0x080003b8       0x68 build/startup.o
+                0x080003b8                Reset_Handler
+
+.glue_7         0x08000420        0x0
+ .glue_7        0x08000420        0x0 linker stubs
+
+.glue_7t        0x08000420        0x0
+ .glue_7t       0x08000420        0x0 linker stubs
+
+.vfp11_veneer   0x08000420        0x0
+ .vfp11_veneer  0x08000420        0x0 linker stubs
+
+.v4_bx          0x08000420        0x0
+ .v4_bx         0x08000420        0x0 linker stubs
+
+.iplt           0x08000420        0x0
+ .iplt          0x08000420        0x0 build/main.o
+
+.rel.dyn        0x08000420        0x0
+ .rel.iplt      0x08000420        0x0 build/main.o
+
+.data           0x20000000        0x0 load address 0x08000420
+                0x20000000                        _sdata = .
+ *(.data)
+ .data          0x20000000        0x0 build/main.o
+ .data          0x20000000        0x0 build/startup.o
+                0x20000060                        _edata = .
+                0x08000420                        _sidata = LOADADDR (.data)
+
+.igot.plt       0x20000000        0x0 load address 0x08000420
+ .igot.plt      0x20000000        0x0 build/main.o
+
+.bss            0x20000000       0x60 load address 0x08000420
+                0x20000000                        _sbss = .
+ *(.bss)
+ .bss           0x20000000       0x48 build/main.o
+                0x20000000                rx_buffer
+ .bss           0x20000048       0x18 build/startup.o
+                0x2000005c                _ebss
+                0x20000060                        _edata = .
+OUTPUT(build/program.elf elf32-littlearm)
+LOAD linker stubs
+
+.debug_info     0x00000000      0x5e6
+ .debug_info    0x00000000      0x489 build/main.o
+ .debug_info    0x00000489      0x15d build/startup.o
+
+.debug_abbrev   0x00000000      0x218
+ .debug_abbrev  0x00000000      0x153 build/main.o
+ .debug_abbrev  0x00000153       0xc5 build/startup.o
+
+.debug_aranges  0x00000000       0x40
+ .debug_aranges
+                0x00000000       0x20 build/main.o
+ .debug_aranges
+                0x00000020       0x20 build/startup.o
+
+.debug_line     0x00000000      0x2f1
+ .debug_line    0x00000000      0x251 build/main.o
+ .debug_line    0x00000251       0xa0 build/startup.o
+
+.debug_str      0x00000000      0x2af
+ .debug_str     0x00000000      0x2af build/main.o
+                                0x282 (size before relaxing)
+ .debug_str     0x000002af      0x18e build/startup.o
+
+.comment        0x00000000       0x26
+ .comment       0x00000000       0x26 build/main.o
+                                 0x27 (size before relaxing)
+ .comment       0x00000026       0x27 build/startup.o
+
+.ARM.attributes
+                0x00000000       0x2e
+ .ARM.attributes
+                0x00000000       0x2e build/main.o
+ .ARM.attributes
+                0x0000002e       0x2e build/startup.o
+
+.debug_frame    0x00000000      0x178
+ .debug_frame   0x00000000      0x144 build/main.o
+ .debug_frame   0x00000144       0x34 build/startup.o
