@@ -7,4 +7,6 @@ typedef struct
     char buffer[RX_BUFFER_SIZE];
     volatile uint32_t head;
     volatile uint32_t tail;
-}RingBuffer_tr;
+}RingBuffer_t;
+
+

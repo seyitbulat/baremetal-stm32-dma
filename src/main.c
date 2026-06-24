@@ -1,7 +1,7 @@
 #include "buffer.h"
 #include "regs.h"
 
-RingBuffer_tr rx_buffer = {.head = 0, .tail = 0};
+RingBuffer_t rx_buffer = {.head = 0, .tail = 0};
 
 void usart_send_string(char* str);
 void usart_send_char(char c);
@@ -12,6 +12,7 @@ void USART1_IRQHandler(void);
 void ring_buffer_write(char c);
 char ring_buffer_read(void);
 
+void delay_ms(uint32_t ms);
 
 int main(void) {
   // set rcc gpio pin enabled
@@ -65,10 +66,8 @@ int main(void) {
   // set nvic 37 usart1 interrupt
   NVIC->ISER[1] |= (1 << 5);
 
- 
-  
   while (1) {
-    if(rx_buffer.head != rx_buffer.tail){
+    if (rx_buffer.head != rx_buffer.tail) {
       char data = ring_buffer_read();
       usart_send_char(data);
     }
@@ -128,11 +127,24 @@ void ring_buffer_write(char c) {
   rx_buffer.head = (rx_buffer.head + 1) % RX_BUFFER_SIZE;
 }
 
-
-char ring_buffer_read(void){
+char ring_buffer_read(void) {
   char c = rx_buffer.buffer[rx_buffer.tail];
 
   rx_buffer.tail = (rx_buffer.tail + 1) % RX_BUFFER_SIZE;
 
   return c;
+}
+
+void delay_ms(uint32_t ms) {
+  STK->LOAD = 16000 - 1;
+
+  STK->VAL = 0;
+
+  STK->CTRL = (1 << 0) | (1 << 2);
+
+  for (uint32_t i = 0; i < ms; i++) {
+    while (!((STK->CTRL >> 16) & 0x01));
+  }
+
+  STK->CTRL = 0;
 }

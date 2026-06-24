@@ -61,3 +61,13 @@ typedef struct {
 
 #define NVIC_BASE_ADDRESS 0xE000E100
 #define NVIC ((NVIC_TypeDef*)NVIC_BASE_ADDRESS)
+
+typedef struct {
+  volatile uint32_t CTRL;
+  volatile uint32_t LOAD;
+  volatile uint32_t VAL;
+  volatile uint32_t CALIB;
+} STK_TypeDef;
+
+#define STK_BASE_ADDRESS 0xE000E010
+#define STK ((STK_TypeDef*)STK_BASE_ADDRESS)
